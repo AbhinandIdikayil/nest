@@ -8,7 +8,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { CreateCustomerDto } from './dto/create-auth.dto';
 import { SigninDto } from './dto/signin.dto';
 
@@ -37,8 +36,8 @@ export class AuthController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
+  update(@Param('id') id: string) {
+    return this.authService.update(+id);
   }
 
   @Delete(':id')

@@ -1,1 +1,1 @@
-yarn build && lint-staged
+yarn build && yarn lint-staged
