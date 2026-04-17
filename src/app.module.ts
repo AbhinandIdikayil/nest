@@ -6,9 +6,17 @@ import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './order/order.module';
+import { PostgresModule } from './common/database/postgres.module';
 
 @Module({
-  imports: [ProductModule, AuthModule, CartModule, PaymentModule, OrderModule],
+  imports: [
+    PostgresModule,
+    ProductModule,
+    AuthModule,
+    CartModule,
+    PaymentModule,
+    OrderModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

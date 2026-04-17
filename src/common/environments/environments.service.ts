@@ -16,6 +16,7 @@ export const DefaultConfigs = {
   POSTGRES_PASS: { value: 'postgres', validate: true },
   POSTGRES_DB: { value: 'nest', validate: true },
   ENVIRONMENT: { value: 'development', validate: true },
+  JWT_SECRET: { value: 'development', validate: true },
 } as const;
 
 @Injectable({

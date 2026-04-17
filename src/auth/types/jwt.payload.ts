@@ -1,0 +1,8 @@
+
+export type JwtPayload = {
+  id: string;
+  email: string;
+  phone: string;
+  firstName: string;
+  lastName: string;
+};

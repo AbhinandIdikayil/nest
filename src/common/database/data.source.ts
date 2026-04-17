@@ -1,5 +1,5 @@
-import {DataSource} from 'typeorm'
-
+import { join } from 'path';
+import { DataSource } from 'typeorm';
 import 'reflect-metadata';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Environments } from '../environments/environments.service';
@@ -13,8 +13,8 @@ export const AppDataSource = new DataSource({
   username: Environments.get('POSTGRES_USER'),
   password: Environments.get('POSTGRES_PASS'),
   database: Environments.get('POSTGRES_DB'),
-  entities: ['src/**/*.entity.ts'],
-  migrations: ['src/common/migrations/*.ts'],
+  entities: [join(__dirname, '..', '..', '**', '*.entity.{js,ts}')],
+  migrations: [join(__dirname, '..', 'migrations', '*.{js,ts}')],
   namingStrategy: new SnakeNamingStrategy(),
   synchronize: false,
 });
