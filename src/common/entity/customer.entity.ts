@@ -5,17 +5,17 @@ import { Entity, Column, PrimaryColumn, Index } from 'typeorm';
 @Index('IDX_CUSTOMER_PHONE', ['phone'], { unique: true })
 export class Customer {
   @PrimaryColumn({ type: 'varchar' }) // 👈 matches migration
-  id!: string;
+  id: string;
 
   @Column({ name: 'first_name', type: 'varchar' })
-  firstName!: string;
+  firstName: string;
 
   @Column({ name: 'last_name', type: 'varchar' })
-  lastName!: string;
+  lastName: string;
 
   @Column({ type: 'varchar' })
-  email!: string;
+  email: string;
 
   @Column({ type: 'varchar' })
-  phone!: string;
+  phone: string;
 }

@@ -8,7 +8,10 @@ import { Customer } from 'src/common/entity/customer.entity';
 import { Environments } from 'src/common/environments/environments.service';
 
 @Module({
-  imports: [JwtModule.register({secret:Environments.get('JWT_SECRET')}), TypeOrmModule.forFeature([Customer])],
+  imports: [
+    JwtModule.register({ secret: Environments.get('JWT_SECRET') }),
+    TypeOrmModule.forFeature([Customer]),
+  ],
   controllers: [AuthController],
   providers: [AuthService, AuthDbService],
 })

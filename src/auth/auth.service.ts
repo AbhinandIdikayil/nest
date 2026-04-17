@@ -5,14 +5,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import { AuthDbService } from './auth.db.service';
 import { SigninDto } from './dto/signin.dto';
 import { CreateCustomerDto } from './dto/create-auth.dto';
 import { Customer } from 'src/common/entity/customer.entity';
 import { Environments } from 'src/common/environments/environments.service';
 import { JwtPayload } from './types/jwt.payload';
-
 
 @Injectable()
 export class AuthService {
@@ -56,7 +54,7 @@ export class AuthService {
     return `This action returns a #${id} auth`;
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
+  update(id: number) {
     return `This action updates a #${id} auth`;
   }
 
@@ -85,5 +83,4 @@ export class AuthService {
       }),
     };
   }
-
 }

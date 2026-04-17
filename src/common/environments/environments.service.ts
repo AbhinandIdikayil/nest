@@ -29,20 +29,26 @@ export class Environments {
     return process.env[key] ?? DefaultConfigs[key].value;
   }
 
-  public static getNumber<K extends keyof typeof DefaultConfigs>(key: K): number {
+  public static getNumber<K extends keyof typeof DefaultConfigs>(
+    key: K,
+  ): number {
     return Number(this.get(key));
   }
 
-  public static getBoolean<K extends keyof typeof DefaultConfigs>(key: K): boolean {
+  public static getBoolean<K extends keyof typeof DefaultConfigs>(
+    key: K,
+  ): boolean {
     return this.get(key) === 'true';
   }
 
   public static validate() {
-    if (this.get('ENVIRONMENT') !== PROJECT_ENVS.PROD) return;
+    if ((this.get('ENVIRONMENT') as PROJECT_ENVS) !== PROJECT_ENVS.PROD) return;
 
     const missing: string[] = [];
 
-    for (const key of Object.keys(DefaultConfigs) as (keyof typeof DefaultConfigs)[]) {
+    for (const key of Object.keys(
+      DefaultConfigs,
+    ) as (keyof typeof DefaultConfigs)[]) {
       const config = DefaultConfigs[key];
 
       if (config.validate && !process.env[key]) {
