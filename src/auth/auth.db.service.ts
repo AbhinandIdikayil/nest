@@ -14,7 +14,7 @@ export class AuthDbService {
 
   async createUser(data: CreateCustomerDto): Promise<Customer> {
     const customer = this.customerRepository.create({
-      id: ulid(),
+      id: `cus_${ulid()}`,
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName ?? '',

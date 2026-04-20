@@ -1,24 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Cart } from '../common/entity/cart.entity';
+import { LineItem } from '../common/entity/line-item.entity';
+import { CartDbService } from './cart.db.service';
+import { AddToCartDto } from './dto/create-cart.dto';
 
 @Injectable()
 export class CartService {
-  create() {
-    return 'This action adds a new cart';
+  constructor(
+    @InjectRepository(Cart)
+    private cartRepository: Repository<Cart>,
+    @InjectRepository(LineItem)
+    private lineItemRepository: Repository<LineItem>,
+    private cartDbService: CartDbService,
+  ) {}
+
+  async addItem(customerId: string, addToCartDto: AddToCartDto) {
+    return await this.cartDbService.addItemToCart(customerId, addToCartDto);
   }
 
-  findAll() {
-    return `This action returns all cart`;
+  async findAll() {
+    return this.cartRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+  async findOne(id: string) {
+    return this.cartRepository.findOne({ where: { id } });
   }
 
-  update(id: number) {
-    return `This action updates a #${id} cart`;
+  async update(id: string, updateData: Partial<Cart>) {
+    await this.cartRepository.update(id, updateData);
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+  async remove(id: string) {
+    await this.cartRepository.delete(id);
+    return { deleted: true };
   }
 }
