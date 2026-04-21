@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Header,
   Post,
   Patch,
   Param,
@@ -32,9 +33,15 @@ export class CartController {
     return this.cartService.findAll();
   }
 
+  @Get('record/:id')
+  findByCartId(@Param('id') id: string) {
+    return this.cartService.findByCartId(id);
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(id);
+  @Header('Content-Type', 'text/html; charset=utf-8')
+  renderCheckoutPage(@Param('id') id: string) {
+    return this.cartService.getCheckoutPage(id);
   }
 
   @Patch(':id')

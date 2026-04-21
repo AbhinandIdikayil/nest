@@ -85,6 +85,10 @@ export class CartDbService {
   async getCartByCustomerId(customerId: string): Promise<Cart | null> {
     return this.cartRepository.findOne({
       where: { customerId, completedAt: null as unknown as Date },
+      relations: {
+        customer: true,
+        items: true,
+      },
       order: { createdAt: 'DESC' },
     });
   }

@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from '../common/entity/cart.entity';
 import { LineItem } from '../common/entity/line-item.entity';
 import { CartDbService } from './cart.db.service';
 import { AddToCartDto } from './dto/create-cart.dto';
+import { renderCheckoutPage } from './templates/checkout-page.template';
 
 @Injectable()
 export class CartService {
@@ -24,13 +25,25 @@ export class CartService {
     return this.cartRepository.find();
   }
 
-  async findOne(id: string) {
-    return this.cartRepository.findOne({ where: { id } });
+  async findByCartId(id: string) {
+    return await this.cartRepository.findOne({ where: { id } });
+  }
+
+  async getCheckoutPage(customerId: string) {
+    const cart = await this.cartDbService.getCartByCustomerId(customerId);
+
+    if (!cart) {
+      throw new NotFoundException(
+        `No active cart found for customer ${customerId}`,
+      );
+    }
+
+    return renderCheckoutPage(cart);
   }
 
   async update(id: string, updateData: Partial<Cart>) {
     await this.cartRepository.update(id, updateData);
-    return this.findOne(id);
+    return this.findByCartId(id);
   }
 
   async remove(id: string) {
