@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "tailwind-best-practices": {
+      "source": "mastra-ai/mastra",
+      "sourceType": "github",
+      "computedHash": "b5720fe165b13c35122f15fa78cea523e9dda48e666fcc71daf1ba71827f0386"
+    }
+  }
+}
