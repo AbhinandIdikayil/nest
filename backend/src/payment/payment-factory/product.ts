@@ -5,6 +5,7 @@ export interface PaymentProduct {
     customer: {
       email: string;
       phone: string;
+      id: string;
       name: string;
     },
     metadata?: Record<string, any>,

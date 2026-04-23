@@ -12,6 +12,7 @@ import {
   VerifyPhonePePaymentDto,
 } from './dto/phonepe-payment.dto';
 import { OrderResponse, VerifyResponse } from './payment-factory/product';
+import { CustomerSession } from 'src/auth/types/jwt.payload';
 
 @Injectable()
 export class PaymentService {
@@ -22,11 +23,12 @@ export class PaymentService {
 
   async createRazorpayOrder(
     dto: CreateRazorpayOrderDto,
+    user: CustomerSession,
   ): Promise<OrderResponse> {
     return this.razorpayService.createOrder(
       dto.amount,
       dto.cartId,
-      dto.customer,
+      { ...dto.customer, id: user.id },
       dto.metadata,
     );
   }
@@ -41,11 +43,14 @@ export class PaymentService {
     );
   }
 
-  async createPhonePeOrder(dto: CreatePhonePeOrderDto): Promise<OrderResponse> {
+  async createPhonePeOrder(
+    dto: CreatePhonePeOrderDto,
+    user: CustomerSession,
+  ): Promise<OrderResponse> {
     return this.phonePeService.createOrder(
       dto.amount,
       dto.cartId,
-      dto.customer,
+      { ...dto.customer, id: user.id },
       dto.metadata,
     );
   }

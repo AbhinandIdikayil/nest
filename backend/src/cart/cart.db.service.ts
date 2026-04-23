@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { Cart } from '../common/entity/cart.entity';
 import { LineItem } from '../common/entity/line-item.entity';
 import { AddToCartDto, AddToCartItemDto } from './dto/create-cart.dto';
@@ -29,7 +29,7 @@ export class CartDbService {
       let cart = await this.cartRepository.findOne({
         where: {
           customerId: customerIdVal,
-          completedAt: null as unknown as Date,
+          completedAt: IsNull(),
         },
       });
 
@@ -84,7 +84,7 @@ export class CartDbService {
 
   async getCartByCustomerId(customerId: string): Promise<Cart | null> {
     return this.cartRepository.findOne({
-      where: { customerId, completedAt: null as unknown as Date },
+      where: { customerId, completedAt: IsNull() },
       relations: {
         customer: true,
         items: true,

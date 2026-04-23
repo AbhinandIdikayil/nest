@@ -1,15 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import axios from 'axios';
 import { PaymentProduct, OrderResponse, VerifyResponse } from './product';
 import { Environments } from 'src/common/environments/environments.service';
+import { PaymentDbService } from '../payment.db.service';
 
 @Injectable()
 export class RazorpayPaymentService implements PaymentProduct {
   private razorpayInstance: Razorpay;
 
-  constructor() {
+  constructor(private readonly paymentDbService: PaymentDbService) {
     this.razorpayInstance = new Razorpay({
       key_id: Environments.get('RAZORPAY_API_KEY'),
       key_secret: Environments.get('RAZORPAY_API_SECRET'),
@@ -19,13 +20,13 @@ export class RazorpayPaymentService implements PaymentProduct {
   async createOrder(
     amount: number,
     cartId: string,
-    _customer: { email: string; phone: string; name: string },
+    _customer: { email: string; phone: string; name: string; id: string },
     _metadata?: Record<string, any>,
   ): Promise<OrderResponse> {
     const options = {
       amount: amount * 100,
       currency: 'INR',
-      notes: { cartId },
+      notes: { cartId, customerId: _customer.id },
     };
 
     const order = await this.razorpayInstance.orders.create(options);
@@ -37,7 +38,6 @@ export class RazorpayPaymentService implements PaymentProduct {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async verifyPayment(
     paymentId: string,
     orderId: string,
@@ -49,14 +49,17 @@ export class RazorpayPaymentService implements PaymentProduct {
       .update(orderId + '|' + paymentId)
       .digest('hex');
 
-    if (generatedSignature === signature) {
-      return {
-        success: true,
-        message: 'Payment verified successfully',
-        transactionId: paymentId,
-      };
+    if (generatedSignature !== signature) {
+      throw new BadRequestException('Invalid payment signature');
     }
 
+    const razorpayOrder = await this.razorpayInstance.orders.fetch(orderId);
+    const { cartId, customerId } = razorpayOrder.notes || {};
+    const order = await this.paymentDbService.createOrder(
+      cartId as string,
+      customerId as string,
+    );
+    await this.paymentDbService.completeCart(cartId as string, order.id);
     return {
       success: false,
       message: 'Invalid signature',
@@ -70,7 +73,7 @@ export class PhonePePaymentService implements PaymentProduct {
   async createOrder(
     amount: number,
     cartId: string,
-    _customer: { email: string; phone: string; name: string },
+    _customer: { email: string; phone: string; name: string; id: string },
     _metadata?: Record<string, any>,
   ): Promise<OrderResponse> {
     const token = await generatePhonepeToken();

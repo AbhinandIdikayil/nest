@@ -43,7 +43,7 @@ function Cart() {
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayType>('razorpay');
-
+  console.log('cart',cart)
   useEffect(() => {
     const token = searchParams.get('tk');
     if (token) {
@@ -80,7 +80,7 @@ function Cart() {
       }
       await gateway.initiateCheckout({
         amount: total,
-        cartId: id!,
+        cartId: cart.id!,
         customer: {
           name: `${cart.customer.firstName} ${cart.customer.lastName}`.trim(),
           email: cart.customer.email,

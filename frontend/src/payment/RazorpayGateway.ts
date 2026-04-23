@@ -61,7 +61,7 @@ export class RazorpayGateway implements PaymentGateway {
     }, {});
 
     return {
-      orderId: response.id,
+      orderId: response.orderId,
       razorpayOrderId: response.razorpayOrderId,
       amount: response.amount,
       currency: response.currency,
@@ -96,11 +96,12 @@ export class RazorpayGateway implements PaymentGateway {
         color: '#aa3bff',
       },
       handler: async (response) => {
+        console.log('response',response)
+        console.log('order',order)
         await this.verifyPayment({
           razorpayPaymentId: response.razorpay_payment_id,
-          razorpayOrderId: response.razorpay_order_id,
+          razorpayOrderId: response.razorpay_order_id || order.orderId,
           razorpaySignature: response.razorpay_signature,
-          cartId: params.cartId,
         });
       },
       modal: {
@@ -122,13 +123,12 @@ export class RazorpayGateway implements PaymentGateway {
     razorpayPaymentId: string;
     razorpayOrderId: string;
     razorpaySignature: string;
-    cartId: string;
   }): Promise<void> {
     await post('/payment/razorpay/verify', {
       razorpayPaymentId: params.razorpayPaymentId,
       razorpayOrderId: params.razorpayOrderId,
       razorpaySignature: params.razorpaySignature,
-      cartId: params.cartId,
+      // cartId: params.cartId,
     }, {});
   }
 }
