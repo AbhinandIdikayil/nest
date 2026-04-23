@@ -15,10 +15,8 @@ export class ProductService {
 
   async create(createProductDto: CreateProductDto) {
     try {
-      console.log('createProductDto', createProductDto);
       return await this.productDbService.createProduct(createProductDto);
     } catch (error) {
-      console.log('Error creating product:', error);
       throw error;
     }
   }

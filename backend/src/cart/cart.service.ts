@@ -41,6 +41,10 @@ export class CartService {
     return renderCheckoutPage(cart);
   }
 
+  async getCartByCustomerId(customerId: string) {
+    return await this.cartDbService.getCartByCustomerId(customerId);
+  }
+
   async update(id: string, updateData: Partial<Cart>) {
     await this.cartRepository.update(id, updateData);
     return this.findByCartId(id);

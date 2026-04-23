@@ -1,32 +1,35 @@
-import { Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { PaymentService } from './payment.service';
+import {
+  CreateRazorpayOrderDto,
+  VerifyRazorpayPaymentDto,
+} from './dto/razorpay-payment.dto';
+import {
+  CreatePhonePeOrderDto,
+  VerifyPhonePePaymentDto,
+} from './dto/phonepe-payment.dto';
 
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Post()
-  create() {
-    return this.paymentService.create();
+  @Post('razorpay/order')
+  async createRazorpayOrder(@Body() dto: CreateRazorpayOrderDto) {
+    return this.paymentService.createRazorpayOrder(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.paymentService.findAll();
+  @Post('razorpay/verify')
+  async verifyRazorpayPayment(@Body() dto: VerifyRazorpayPaymentDto) {
+    return this.paymentService.verifyRazorpayPayment(dto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
+  @Post('phonepe/order')
+  async createPhonePeOrder(@Body() dto: CreatePhonePeOrderDto) {
+    return this.paymentService.createPhonePeOrder(dto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.paymentService.update(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentService.remove(+id);
+  @Post('phonepe/verify')
+  async verifyPhonePePayment(@Body() dto: VerifyPhonePePaymentDto) {
+    return this.paymentService.verifyPhonePePayment(dto);
   }
 }

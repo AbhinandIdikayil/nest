@@ -44,6 +44,11 @@ export class CartController {
     return this.cartService.getCheckoutPage(id);
   }
 
+  @Get('customer/:id')
+  async getCartByCustomerId(@Param('id') id: string) {
+    return await this.cartService.getCartByCustomerId(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

@@ -18,6 +18,12 @@ export const DefaultConfigs = {
   ENVIRONMENT: { value: 'development', validate: true },
   JWT_SECRET: { value: 'development', validate: true },
   ADMIN_KEY: { value: '', validate: false },
+  PHONEPE_CLIENT_ID: { value: '', validate: false },
+  PHONEPE_CLIENT_VERSION: { value: '1', validate: false },
+  PHONEPE_CLIENT_SECRET: { value: '', validate: false },
+  PHONEPE_ENV: { value: 'SANDBOX', validate: false },
+  RAZORPAY_API_KEY: { value: '', validate: false },
+  RAZORPAY_API_SECRET: { value: '', validate: false },
 } as const;
 
 @Injectable({

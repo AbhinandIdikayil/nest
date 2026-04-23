@@ -3,11 +3,13 @@ import {
   Entity,
   PrimaryColumn,
   OneToMany,
+  OneToOne,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { LineItem } from './line-item.entity';
 import { Customer } from './customer.entity';
+import { Order } from 'src/common/entity/order.entity';
 
 @Entity('carts')
 export class Cart {
@@ -29,6 +31,13 @@ export class Cart {
 
   @Column({ name: 'completed_at', nullable: true })
   completedAt: Date | null;
+
+  @Column({ name: 'order_id', nullable: true })
+  orderId: string | null;
+
+  @OneToOne(() => Order, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'order_id' })
+  order: Order;
 
   @OneToMany(() => LineItem, (item) => item.cart, { cascade: true })
   items: LineItem[];
