@@ -11,15 +11,10 @@ declare global {
 
 interface PhonePeTransactOptions {
   tokenUrl: string;
-  callback: (response: PhonePePaymentResponse) => void;
+  callback: (response: string) => void;
   type: 'IFRAME' | 'REDIRECT';
 }
 
-interface PhonePePaymentResponse {
-  status: string;
-  transactionId: string;
-  merchantId: string;
-}
 
 export class PhonePeGateway implements PaymentGateway {
   readonly type: PaymentGatewayType = 'phonepe';
@@ -35,7 +30,7 @@ export class PhonePeGateway implements PaymentGateway {
     script.defer = true;
     document.body.appendChild(script);
 
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>((resolve) => {
       script.onload = () => resolve();
     });
 
