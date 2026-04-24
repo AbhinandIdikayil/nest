@@ -59,9 +59,9 @@ export class PaymentService {
     dto: VerifyPhonePePaymentDto,
   ): Promise<VerifyResponse> {
     return this.phonePeService.verifyPayment(
-      dto.paymentId,
-      dto.orderId,
-      dto.signature,
+      dto.merchantOrderId,
+      dto.cartId,
+      '',
     );
   }
 }

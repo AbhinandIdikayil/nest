@@ -75,7 +75,7 @@ export class AuthService {
       customer,
       accessToken: await this.jwtService.signAsync(payload, {
         secret: Environments.get('JWT_SECRET'),
-        expiresIn: '15m',
+        expiresIn: '2hr',
       }),
       refreshToken: await this.jwtService.signAsync(payload, {
         secret: Environments.get('JWT_SECRET'),

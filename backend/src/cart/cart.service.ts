@@ -42,7 +42,8 @@ export class CartService {
   }
 
   async getCartByCustomerId(customerId: string) {
-    return await this.cartDbService.getCartByCustomerId(customerId);
+    const data = await this.cartDbService.getCartByCustomerId(customerId);
+    return data;
   }
 
   async update(id: string, updateData: Partial<Cart>) {

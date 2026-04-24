@@ -70,6 +70,8 @@ export class RazorpayPaymentService implements PaymentProduct {
 
 @Injectable()
 export class PhonePePaymentService implements PaymentProduct {
+  constructor(private readonly paymentDbService: PaymentDbService) {}
+
   async createOrder(
     amount: number,
     cartId: string,
@@ -89,7 +91,7 @@ export class PhonePePaymentService implements PaymentProduct {
 
     const paymentPayload = {
       merchantOrderId: orderId,
-      amount: amount * 100,
+      amount: amount,
       paymentFlow: {
         type: 'PG_CHECKOUT',
         message: 'Payment message used for collect requests',
@@ -100,6 +102,10 @@ export class PhonePePaymentService implements PaymentProduct {
       prefillUserLoginDetails: {
         phoneNumber: _customer.phone,
       },
+      metaInfo: {
+        udf1: _customer.id,
+        udf2: cartId,
+      },
     };
 
     try {
@@ -109,7 +115,6 @@ export class PhonePePaymentService implements PaymentProduct {
           Authorization: `O-Bearer ${token}`,
         },
       });
-      console.log('PhonePe payment response:', response.data);
       return {
         orderId,
         amount,
@@ -128,17 +133,51 @@ export class PhonePePaymentService implements PaymentProduct {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async verifyPayment(
     paymentId: string,
     _orderId: string,
     _signature?: string,
   ): Promise<VerifyResponse> {
+    const data = await this.checkPaymentStatus(paymentId);
+    if (!data) {
+      throw new BadRequestException('Payment not completed');
+    }
+    const { udf1, udf2 } = data?.metaInfo || {};
+    const order = await this.paymentDbService.createOrder(
+      udf2 as string,
+      udf1 as string,
+    );
+    await this.paymentDbService.completeCart(udf2 as string, order.id);
     return {
       success: true,
       message: 'Payment verified successfully',
       transactionId: paymentId,
     };
+  }
+
+  async checkPaymentStatus(merchantOrderId: string) {
+    try {
+      const url =
+        Environments.get('PHONEPE_ENV') === 'SANDBOX'
+          ? `https://api-preprod.phonepe.com/apis/pg-sandbox/checkout/v2/order/${merchantOrderId}/status`
+          : `https://api.phonepe.com/apis/pg/checkout/v2/order/${merchantOrderId}/status`;
+
+      const token = await generatePhonepeToken();
+      const response = (
+        await axios.get(url, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `O-Bearer ${token}`,
+          },
+        })
+      ).data;
+      if (response.state == 'COMPLETED') {
+        return response;
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

@@ -34,12 +34,8 @@ export class CreatePhonePeOrderDto {
 
 export class VerifyPhonePePaymentDto {
   @IsString()
-  paymentId: string;
+  merchantOrderId: string;
 
   @IsString()
-  orderId: string;
-
-  @IsString()
-  @IsOptional()
-  signature?: string;
+  cartId: string;
 }

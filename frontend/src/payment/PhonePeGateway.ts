@@ -32,12 +32,11 @@ export class PhonePeGateway implements PaymentGateway {
   async initiateCheckout(params: { amount: number; cartId: string; customer: { name: string; email: string; phone: string } }): Promise<void> {
     const script = document.createElement('script');
     script.src = 'https://mercury.phonepe.com/web/bundle/checkout.js';
-    script.async = true;
+    script.defer = true;
     document.body.appendChild(script);
 
     await new Promise<void>((resolve, reject) => {
       script.onload = () => resolve();
-      script.onerror = () => reject(new Error('Failed to load PhonePe SDK'));
     });
 
     const response = await post('/payment/phonepe/order', {
@@ -50,10 +49,11 @@ export class PhonePeGateway implements PaymentGateway {
       },
     }, {});
 
-    const callback = (paymentResponse: PhonePePaymentResponse) => {
-      if (paymentResponse.status === 'SUCCESS') {
+    const callback = (paymentResponse: string) => {
+      console.log('paymentResponse', paymentResponse)
+      if (paymentResponse === 'CONCLUDED') {
         post('/payment/phonepe/verify', {
-          transactionId: paymentResponse.transactionId,
+          merchantOrderId: response.orderId,
           cartId: params.cartId,
         }, {}).then(() => {
           alert('Payment successful!');
